@@ -7,7 +7,7 @@ using BenchmarkTools
 using CSV
 using DataFrames
 
-include("test_pairwise.jl")
+#include("test_pairwise.jl")
 
 #=
 HALOS="/hpcstorage/zhaoc/PATCHY_BOX/pre-recon/halo/BDM_Apk/CATALPTCICz0.562G960S1010008301.dat"
