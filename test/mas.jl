@@ -1,7 +1,8 @@
 import Pkg, Revise
+Pkg.add(path="/home/astro/dforero/codes/CosmoCorr")
 Pkg.resolve()
 
-#Pkg.add(path="/home/astro/dforero/codes/CosmoCorr")
+
 #import Pkg; Pkg.add("Plots")
 using CosmoCorr
 using Random
