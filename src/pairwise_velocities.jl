@@ -154,3 +154,14 @@ function pairwise_vel_cellist(sample_1::Vector{SVector{3,Float32}},
 
     return output[2], output[1]
 end
+
+
+precompile(pairwise_vel_cellist, (Vector{SVector{3,Float32}},
+                                    Vector{SVector{3,Float32}}, 
+                                    Vector{SVector{3,Float32}},
+                                    Vector{SVector{3,Float32}},
+                                    Vector,
+                                    SVector{3},
+                                    AbstractFloat,
+                                    Vector{<:AbstractFloat},
+                                    ))

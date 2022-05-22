@@ -4,6 +4,7 @@ module CosmoCorr
 
 
 export cic
+export pairwise_vel_cellist
 
 
 include("mas.jl")
