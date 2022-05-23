@@ -3,11 +3,9 @@ using CSV
 using DataFrames
 using NearestNeighbors
 using CellListMap
-using Distances
 using NPZ
 using StaticArrays
 using LinearAlgebra
-using BenchmarkTools
 using CosmoCorr
 
 gal_fn = "../data/CATALPTCICz0.466G960S1005638091.dat"
@@ -46,7 +44,7 @@ void_cat = VoidCat(Vector{SVector{3, Float32}}([SVector{3, Float32}(vector) for 
 
 mask_void_cat!(void_cat, 16, 50, :rad)
 #mask_void_cat!(void_cat, 0., 3.9e-4, :ndens)
-@show size(void_cat.ndens), size(void_cat.pos), size(void_cat.rad)
+
 mask = [all(v .< box_size) for v in void_cat.pos]
 void_cat.rad = void_cat.rad[mask]
 void_cat.ndens = void_cat.ndens[mask]
@@ -56,9 +54,26 @@ gal_cat.vel = gal_cat.vel[mask]
 gal_cat.pos = gal_cat.pos[mask]
 
 
-bin_edges = collect(1e-8:1e-2:5)
+bin_edges = collect(1e-5:1.:121)
 distance_cutoff = 120.
+println("Computing pairwise unnormalized")
+n_pairs, v_r = @time CosmoCorr.pairwise_vel_cellist(void_cat.pos,
+                                [SVector{3,Float32}(0., 0., 0.) for _ in 1:size(void_cat.pos)[1]], 
+                                gal_cat.pos,
+                                gal_cat.vel,
+                                bin_edges,
+                                box_size,
+                                distance_cutoff,
+                                [1. for _ in 1:size(void_cat.pos)[1]]
+                                )
 
+bin_centers = 0.5 * (bin_edges[1:end-1] + bin_edges[2:end])
+CSV.write("test_cc_abs.dat", (smin = bin_edges[1:end-1], smax = bin_edges[2:end], scen = bin_centers, n_pairs=n_pairs, vr = v_r, vrnorm = v_r ./ n_pairs))
+
+
+bin_edges = collect(1e-5:1e-1:5)
+distance_cutoff = maximum(bin_edges) * maximum(void_cat.rad)
+println("Computing pairwise normalized")
 n_pairs, v_r = @time CosmoCorr.pairwise_vel_cellist(void_cat.pos,
                                 [SVector{3,Float32}(0., 0., 0.) for _ in 1:size(void_cat.pos)[1]], 
                                 gal_cat.pos,
@@ -67,11 +82,10 @@ n_pairs, v_r = @time CosmoCorr.pairwise_vel_cellist(void_cat.pos,
                                 box_size,
                                 distance_cutoff,
                                 void_cat.rad,
-                                #[16. for _ in 1:size(void_cat.pos)[1]]
                                 )
 
 bin_centers = 0.5 * (bin_edges[1:end-1] + bin_edges[2:end])
-CSV.write("threaded_cl.dat", (smin = bin_edges[1:end-1], smax = bin_edges[2:end], scen = bin_centers, n_pairs=n_pairs, vr = v_r, vrnorm = v_r ./n_pairs))
+CSV.write("test_cc_norm.dat", (smin = bin_edges[1:end-1], smax = bin_edges[2:end], scen = bin_centers, n_pairs=n_pairs, vr = v_r, vrnorm = v_r ./ n_pairs))
 
 
 #=
