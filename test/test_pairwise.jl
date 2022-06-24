@@ -33,14 +33,14 @@ function mask_data_box!(data, pos, box_size)
     data = data[mask]
 end
 
-box_size = SVector{3, Float64}(2500., 2500., 2500.)
+box_size = SVector{3, Float64}(500., 500., 500.)
 gal_data = Array{Float32,2}(Array{Float32, 2}(CSV.read(gal_fn, DataFrame, header=0, types=Float32))')
-gal_cat = GalCat(Vector{SVector{3, Float32}}([SVector{3, Float32}(vector) for vector in eachslice(gal_data[1:3,:], dims=2)]),
-                 Vector{SVector{3, Float32}}([SVector{3, Float32}(vector) for vector in eachslice(gal_data[4:6,:], dims=2)]))
+gal_cat = GalCat(Vector{SVector{3, Float32}}([SVector{3, Float32}(vector) for vector in eachslice(@view(gal_data[1:3,:]), dims=2)]),
+                 Vector{SVector{3, Float32}}([SVector{3, Float32}(vector) for vector in eachslice(@view(gal_data[4:6,:]), dims=2)]))
 void_data = Array{Float32,2}(npzread(void_fn)')
-void_cat = VoidCat(Vector{SVector{3, Float32}}([SVector{3, Float32}(vector) for vector in eachslice(void_data[1:3,:], dims=2)]),
-                   Vector{Float32}(void_data[4,:]),
-                   Vector{Float32}(void_data[end-1,:]))
+void_cat = VoidCat(Vector{SVector{3, Float32}}([SVector{3, Float32}(vector) for vector in eachslice(@view(void_data[1:3,:]), dims=2)]),
+                   Vector{Float32}(@view(void_data[4,:])),
+                   Vector{Float32}(@view(void_data[end-1,:])))
 
 mask_void_cat!(void_cat, 16, 50, :rad)
 #mask_void_cat!(void_cat, 0., 3.9e-4, :ndens)

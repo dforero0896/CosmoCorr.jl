@@ -24,9 +24,12 @@ fig.savefig("../plots/test_pairwise.png", dpi=300)
 
 
 fig, ax = pplt.subplots(nrows=1, ncols=2, share=0)
-s, dd, dd_norm, xi = np.loadtxt("test_cc_tpcf.dat", usecols=(2, 4, 5, 6), delimiter=',', skiprows=1, unpack=True)
+s, dd, dd_norm, xi, rr_norm = np.loadtxt("test_cc_tpcf.dat", usecols=(2, 4, 5, 6, 7), delimiter=',', skiprows=1, unpack=True)
 print(xi)
+print(dd)
 print(s)
-ax[0].plot(s, (xi))
+ax[0].plot(s, s**2*(xi))
+s, dd, dd_norm= np.loadtxt("test_cc_tpcf.dat", usecols=(2, 4, 5), delimiter=',', skiprows=1, unpack=True)
+ax[0].plot(s, s**2*(dd_norm / rr_norm - 1.), ls='--')
 fig.savefig("../plots/test_pair_counters.png", dpi=300)
 

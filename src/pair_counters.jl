@@ -17,11 +17,11 @@ end
 
 
 
-function map_box_pc(x, y, i, j, d2, output, wx, wy, sq_bin_edges, box_size)
+function map_box_pc(x, y, i, j, d2, output, wx, wy, bin_edges, box_size)
     s_vector = x - y #CellListMap takes care of PBC already but a small shift is seen in the final hist.
     #s_vector = separation_vector(x,y, box_size)
-    bin_id = searchsortedfirst(sq_bin_edges, d2) 
-    if bin_id < length(sq_bin_edges)
+    bin_id = searchsortedlast(bin_edges, sqrt(d2))
+    if (bin_id > 0) & (bin_id < length(bin_edges))
         output[1][bin_id] += (wx[i] * wy[j])
         output[2][bin_id] += 1
     end
@@ -47,7 +47,7 @@ function box_paircount_cellist(sample_1::Vector{SVector{3,Float32}},
                                     bin_edges::Vector,
                                     box_size::SVector{3},
                                     )
-    sq_bin_edges = bin_edges.^2
+    
     n_bins = size(bin_edges)
     distance_cutoff = maximum(bin_edges)
     box = Box(box_size, distance_cutoff)
@@ -55,7 +55,7 @@ function box_paircount_cellist(sample_1::Vector{SVector{3,Float32}},
     output = (zeros(n_bins),
             zeros(Int32, n_bins))
     map_pairwise!(
-        (x, y, i, j, d2, output) -> map_box_pc(x, y, i, j, d2, output, weight_1, weight_2, sq_bin_edges, box_size),
+        (x, y, i, j, d2, output) -> map_box_pc(x, y, i, j, d2, output, weight_1, weight_2, bin_edges, box_size),
         output, box, cl,
         reduce = reduce_hist,
         show_progress = true
