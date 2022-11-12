@@ -19,11 +19,11 @@ box_min = @SVector [0f0 for _ in 1:3]
 const grid_size = (512, 512, 512)
 
 ρ = zeros(eltype(data_cat_pos[1]), grid_size...);
-cic!(ρ, data_cat_pos..., data_cat_w, box_size, box_min; wrap = true)
+CosmoCorr.cic!(ρ, data_cat_pos..., data_cat_w, box_size, box_min; wrap = true)
 
-p = heatmap(dropdims(mean(ρ, dims=1), dims=1))
+p = heatmap(dropdims(mean(ρ, dims=1), dims=1), aspect_ratio = :equal)
 
-savefig(p, "plots/simulation.jl")
+savefig(p, "plots/simulation.png")
 
 
 

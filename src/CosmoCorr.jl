@@ -15,7 +15,7 @@ using CUDAKernels
 
 # Write your package code here.
 
-export cic!
+
 include("mas.jl")
 include("power_spectrum.jl")
 #include("pairwise_velocities.jl")

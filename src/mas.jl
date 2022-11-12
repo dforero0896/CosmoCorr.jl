@@ -45,6 +45,6 @@ function cic!(ρ, data_x, data_y, data_z, data_w, box_size, box_min; wrap::Bool 
         ρ[x1,y0,z1] += wx1 * wy0 * wz1
         ρ[x0,y1,z1] += wx0 * wy1 * wz1
         ρ[x1,y1,z1] += wx1 * wy1 * wz1
-    end
+    end #for
     ρ
-end
+end #func
