@@ -33,7 +33,7 @@ function mask_data_box!(data, pos, box_size)
     data = data[mask]
 end
 
-box_size = SVector{3, Float64}(500., 500., 500.)
+box_size = SVector{3, Float64}(1000., 1000., 1000.)
 gal_data = Array{Float32,2}(Array{Float32, 2}(CSV.read(gal_fn, DataFrame, header=0, types=Float32))')
 gal_cat = GalCat(Vector{SVector{3, Float32}}([SVector{3, Float32}(vector) for vector in eachslice(gal_data[1:3,:], dims=2)]),
                  Vector{SVector{3, Float32}}([SVector{3, Float32}(vector) for vector in eachslice(gal_data[4:6,:], dims=2)]))
@@ -54,7 +54,7 @@ gal_cat.vel = gal_cat.vel[mask]
 gal_cat.pos = gal_cat.pos[mask]
 
 
-bin_edges = collect(1e-4:5.:105)
+bin_edges = collect(1e-4:5.:205)
 println("Computing box pair counts")
 n_pairs, weighted_pairs = @time CosmoCorr.box_paircount_cellist(void_cat.pos,
                                                     [1. for _ in 1:size(void_cat.pos)[1]],
@@ -68,10 +68,5 @@ norm = length(void_cat.pos)^2
 @show norm
 
 rr_counts = analytic_rr_1d(bin_edges, box_size)
-@show rr_counts
-@show weighted_pairs ./ norm
-@show (weighted_pairs[1:end-1] ./ norm ./ rr_counts) .- 1
 bin_centers = 0.5 * (bin_edges[1:end-1] + bin_edges[2:end])
-@show bin_edges
-@show bin_centers
 CSV.write("test_cc_tpcf.dat", (smin = bin_edges[1:end-1], smax = bin_edges[2:end], scen = bin_centers, n_pairs=n_pairs, wpairs = weighted_pairs, norm_wpairs = weighted_pairs ./ norm, tpcf = weighted_pairs[1:end-1] ./ norm ./ rr_counts .- 1., rr = rr_counts))

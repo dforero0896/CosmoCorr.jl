@@ -28,6 +28,17 @@ function map_box_pc(x, y, i, j, d2, output, wx, wy, bin_edges, box_size)
     return output
 end
 
+function map_box_diff_pc(x, y, i, j, d2, output, wx, wy, bin_edges, box_size)
+    s_vector = x - y #CellListMap takes care of PBC already but a small shift is seen in the final hist.
+    #s_vector = separation_vector(x,y, box_size)
+    bin_id = searchsortedlast(bin_edges, sqrt(d2))
+    if (bin_id > 0) & (bin_id < length(bin_edges))
+        output[1][bin_id] += (wx[i] * wy[j])
+        output[2][bin_id] += 1
+    end
+    return output
+end
+
 function reduce_hist(hist,hist_threaded)
     hist[1] .= hist_threaded[1][1]
     hist[2] .= hist_threaded[1][2]
