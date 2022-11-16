@@ -12,6 +12,8 @@ using Interpolations
 using CUDA
 using KernelAbstractions
 using CUDAKernels
+using SphericalHarmonics
+using LegendrePolynomials
 
 # Write your package code here.
 
