@@ -87,6 +87,7 @@ end #func
 
     # Simulation boxes w/o randoms
     function Mesh(data_pos, data_wt, grid_size, box_size, box_min, interlacing; fft_plan = nothing)
+        data_pos = deepcopy(data_pos)
         field_r = zeros(eltype(data_pos[1]), grid_size...)
         CosmoCorr.cic!(field_r, data_pos..., data_wt, box_size, box_min; wrap = true)
         wdata = sum(data_wt)
