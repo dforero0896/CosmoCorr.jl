@@ -3,9 +3,9 @@ function cic!(ρ, data_x, data_y, data_z, data_w, box_size, box_min; wrap::Bool 
     for i in eachindex(data_x)
 
         if wrap
-            x = (data_x[i] - box_min[1]) > box_size[1] ?  data_x[i] - box_size[1] : data_x[i]
-            y = (data_y[i] - box_min[1]) > box_size[1] ?  data_y[i] - box_size[1] : data_y[i]
-            z = (data_z[i] - box_min[1]) > box_size[1] ?  data_z[i] - box_size[1] : data_z[i]
+            data_x[i] = (data_x[i] - box_min[1]) > box_size[1] ?  data_x[i] - box_size[1] : data_x[i]
+            data_y[i] = (data_y[i] - box_min[1]) > box_size[1] ?  data_y[i] - box_size[1] : data_y[i]
+            data_z[i] = (data_z[i] - box_min[1]) > box_size[1] ?  data_z[i] - box_size[1] : data_z[i]
         end #if
 
         x = (x - box_min[1]) * n_bins[1] / box_size[1] + 1
