@@ -1,7 +1,16 @@
+@inline function wrap_indices(index, ngrid)
+    if index > ngrid
+        return index - ngrid
+    elseif index < 1
+        return index + ngrid
+    else
+        return index
+    end #if
+end #func
+
 function cic!(ρ, data_x, data_y, data_z, data_w, box_size, box_min; wrap::Bool = true) 
     n_bins = size(ρ)
     for i in eachindex(data_x)
-
         if wrap
             data_x[i] = (data_x[i] - box_min[1]) > box_size[1] ?  data_x[i] - box_size[1] : data_x[i]
             data_y[i] = (data_y[i] - box_min[1]) > box_size[1] ?  data_y[i] - box_size[1] : data_y[i]
@@ -47,4 +56,28 @@ function cic!(ρ, data_x, data_y, data_z, data_w, box_size, box_min; wrap::Bool 
         ρ[x1,y1,z1] += wx1 * wy1 * wz1
     end #for
     ρ
+end #func
+
+function ngp!(ρ, data_x, data_y, data_z, data_w, box_size, box_min; wrap::Bool = true) 
+    n_bins = size(ρ)
+    for i in eachindex(data_x)
+        if wrap
+            data_x[i] = (data_x[i] - box_min[1]) > box_size[1] ?  data_x[i] - box_size[1] : data_x[i]
+            data_y[i] = (data_y[i] - box_min[1]) > box_size[1] ?  data_y[i] - box_size[1] : data_y[i]
+            data_z[i] = (data_z[i] - box_min[1]) > box_size[1] ?  data_z[i] - box_size[1] : data_z[i]
+        end #if
+
+        x = (data_x[i] - box_min[1]) * n_bins[1] / box_size[1] + 1
+        y = (data_y[i] - box_min[2]) * n_bins[2] / box_size[2] + 1
+        z = (data_z[i] - box_min[3]) * n_bins[3] / box_size[3] + 1
+        
+        x0::Int = 1 + Int(floor(x))
+        x0 = wrap ? wrap_indices(x0, n_bins[1]) : x0
+        y0::Int = 1 + Int(floor(y))
+        y0 = wrap ? wrap_indices(y0, n_bins[2]) : y0
+        z0::Int = 1 + Int(floor(z))
+        z0 = wrap ? wrap_indices(z0, n_bins[3]) : z0
+
+        ρ[x0,y0,z0] += data_w[i]
+    end #for  
 end #func

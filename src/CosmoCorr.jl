@@ -20,6 +20,9 @@ using LegendrePolynomials
 
 include("mas.jl")
 include("power_spectrum.jl")
+include("bispectrum.jl")
+
+export power_spectrum, bispectrum
 #include("pairwise_velocities.jl")
 #include("pair_counters.jl")
 
